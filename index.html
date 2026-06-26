@@ -3,91 +3,118 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>विद्यार्थी उपस्थिती व्यवस्थापन V4.0</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>विद्यार्थी उपस्थिती व्यवस्थापन V4.2</title>
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <header>
-    <h1>विद्यार्थी उपस्थिती व्यवस्थापन V4.0</h1>
-    <p>Firebase Cloud आधारित Admin Panel</p>
-  </header>
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>विद्यार्थी उपस्थिती व्यवस्थापन V4.2</h1>
+      <p>Firebase Cloud आधारित Professional Admin Panel</p>
+    </div>
+    <button id="logoutBtn" class="btn danger hidden">Logout</button>
+  </div>
+</header>
 
-  <main>
-    <section class="card" id="loginCard">
-      <h2>Login</h2>
-      <input id="email" type="email" placeholder="Email" />
-      <input id="password" type="password" placeholder="Password" />
-      <button id="loginBtn">Login</button>
-      <button id="resetBtn" class="secondary">Password Reset</button>
-      <p id="loginMsg"></p>
+<main class="container">
+  <section id="loginCard" class="card login-card">
+    <h2>Admin Login</h2>
+    <input id="email" type="email" placeholder="Email" autocomplete="username" />
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+    <div class="actions">
+      <button id="loginBtn" class="btn">Login</button>
+      <button id="resetBtn" class="btn secondary">Password Reset</button>
+    </div>
+    <p id="loginMsg" class="msg"></p>
+  </section>
+
+  <section id="appPanel" class="hidden">
+    <div class="topbar card">
+      <div><b>Logged in:</b> <span id="userEmail"></span></div>
+      <span class="pill">Cloud Firestore Connected</span>
+    </div>
+
+    <section class="dashboard-grid">
+      <div class="stat card"><span id="studentCount">0</span><small>विद्यार्थी</small></div>
+      <div class="stat card"><span id="teacherCount">0</span><small>शिक्षक</small></div>
+      <div class="stat card"><span id="attendanceCount">0</span><small>उपस्थिती नोंदी</small></div>
+      <div class="stat card"><span id="linkCount">0</span><small>अभ्यासक्रम लिंक</small></div>
     </section>
 
-    <section id="appPanel" class="hidden">
-      <div class="topbar">
-        <strong id="userEmail"></strong>
-        <button id="logoutBtn">Logout</button>
+    <section class="grid">
+      <div class="card">
+        <h2>विद्यार्थी नोंदणी</h2>
+        <input id="studentName" placeholder="विद्यार्थ्याचे नाव" />
+        <input id="studentClass" placeholder="इयत्ता / विभाग" />
+        <input id="studentRoll" placeholder="रोल नंबर" />
+        <input id="parentMobile" placeholder="पालक मोबाईल नंबर (10 अंक)" maxlength="10" />
+        <button id="addStudentBtn" class="btn">विद्यार्थी Save करा</button>
+        <p id="studentMsg" class="msg"></p>
       </div>
 
-      <div class="grid">
-        <section class="card">
-          <h2>विद्यार्थी नोंदणी</h2>
-          <input id="studentName" placeholder="विद्यार्थ्याचे नाव" />
-          <input id="studentClass" placeholder="इयत्ता उदा. 8वी" />
-          <input id="studentRoll" placeholder="रोल नंबर" />
-          <input id="parentMobile" placeholder="पालक मोबाईल नंबर" maxlength="10" />
-          <button id="addStudentBtn">विद्यार्थी Save करा</button>
-          <p id="studentMsg"></p>
-        </section>
-
-        <section class="card">
-          <h2>शिक्षक नोंदणी</h2>
-          <input id="teacherName" placeholder="शिक्षकाचे नाव" />
-          <input id="teacherSubject" placeholder="विषय" />
-          <input id="teacherMobile" placeholder="मोबाईल नंबर" maxlength="10" />
-          <button id="addTeacherBtn">शिक्षक Save करा</button>
-          <p id="teacherMsg"></p>
-        </section>
-
-        <section class="card">
-          <h2>उपस्थिती नोंद</h2>
-          <select id="attendanceType">
-            <option value="student">विद्यार्थी</option>
-            <option value="teacher">शिक्षक</option>
-          </select>
-          <input id="personName" placeholder="नाव" />
-          <input id="attendanceClass" placeholder="वर्ग / विभाग" />
-          <select id="status">
-            <option value="Present">Present / उपस्थित</option>
-            <option value="Absent">Absent / अनुपस्थित</option>
-            <option value="Leave">Leave / रजा</option>
-          </select>
-          <input id="attendanceDate" type="date" />
-          <button id="addAttendanceBtn">उपस्थिती Save करा</button>
-          <p id="attendanceMsg"></p>
-        </section>
-
-        <section class="card">
-          <h2>अभ्यासक्रम / लिंक</h2>
-          <input id="linkTitle" placeholder="उदा. इयत्ता 10 गणित भाग 1" />
-          <input id="linkUrl" placeholder="PDF / Website Link" />
-          <button id="addLinkBtn">Link Save करा</button>
-          <p id="linkMsg"></p>
-        </section>
+      <div class="card">
+        <h2>शिक्षक नोंदणी</h2>
+        <input id="teacherName" placeholder="शिक्षकाचे नाव" />
+        <input id="teacherSubject" placeholder="विषय" />
+        <input id="teacherMobile" placeholder="मोबाईल नंबर (10 अंक)" maxlength="10" />
+        <button id="addTeacherBtn" class="btn">शिक्षक Save करा</button>
+        <p id="teacherMsg" class="msg"></p>
       </div>
 
-      <section class="card">
+      <div class="card">
+        <h2>उपस्थिती नोंद</h2>
+        <select id="attendanceType"><option value="student">विद्यार्थी</option><option value="teacher">शिक्षक</option></select>
+        <input id="personName" placeholder="नाव" />
+        <input id="attendanceClass" placeholder="वर्ग / विभाग / विषय" />
+        <select id="status"><option value="Present">Present / उपस्थित</option><option value="Absent">Absent / अनुपस्थित</option><option value="Leave">Leave / रजा</option></select>
+        <input id="attendanceDate" type="date" />
+        <input id="attendanceMobile" placeholder="मोबाईल नंबर (WhatsApp/SMS साठी)" maxlength="10" />
+        <button id="addAttendanceBtn" class="btn">उपस्थिती Save करा</button>
+        <p id="attendanceMsg" class="msg"></p>
+      </div>
+
+      <div class="card">
+        <h2>अभ्यासक्रम / लिंक</h2>
+        <input id="linkTitle" placeholder="उदा. इयत्ता 10 गणित भाग 1" />
+        <input id="linkUrl" placeholder="PDF / Website Link" />
+        <button id="addLinkBtn" class="btn">Link Save करा</button>
+        <p id="linkMsg" class="msg"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>SMS API Settings</h2>
+      <p class="note">API Key frontend मध्ये ठेवणे production साठी सुरक्षित नाही. Testing साठी वापरा; final साठी Firebase Cloud Functions/Backend वापरा.</p>
+      <div class="settings-grid">
+        <input id="smsApiUrl" placeholder="SMS API URL उदा. https://www.fast2sms.com/dev/bulkV2" />
+        <input id="smsApiKey" placeholder="SMS API Key / Token" />
+        <select id="smsProvider"><option value="fast2sms">Fast2SMS format</option><option value="generic">Generic GET format</option></select>
+        <button id="saveSmsSettingsBtn" class="btn secondary">SMS Settings Save</button>
+      </div>
+      <p id="smsSettingsMsg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <div class="report-head">
         <h2>Latest Attendance Report</h2>
-        <button id="loadReportBtn">Report पाहा</button>
-        <button id="exportCsvBtn" class="secondary">CSV Download</button>
+        <div class="actions">
+          <button id="loadReportBtn" class="btn">Report पाहा</button>
+          <button id="exportCsvBtn" class="btn secondary">CSV Download</button>
+          <button id="bulkWhatsAppBtn" class="btn success">WhatsApp Bulk Link</button>
+        </div>
+      </div>
+      <div class="table-wrap">
         <table>
-          <thead><tr><th>दिनांक</th><th>प्रकार</th><th>नाव</th><th>वर्ग</th><th>Status</th></tr></thead>
+          <thead><tr><th>दिनांक</th><th>प्रकार</th><th>नाव</th><th>वर्ग</th><th>Status</th><th>Mobile</th><th>Action</th></tr></thead>
           <tbody id="reportBody"></tbody>
         </table>
-      </section>
+      </div>
+      <p id="reportMsg" class="msg"></p>
     </section>
-  </main>
+  </section>
+</main>
 
-  <script type="module" src="firebase-config.js"></script>
-  <script type="module" src="app.js"></script>
+<script type="module" src="./app.js"></script>
 </body>
 </html>
