@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>विद्यार्थी उपस्थिती व्यवस्थापन V4.0</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>विद्यार्थी उपस्थिती व्यवस्थापन V4.0</h1>
+    <p>Firebase Cloud आधारित Admin Panel</p>
+  </header>
+
+  <main>
+    <section class="card" id="loginCard">
+      <h2>Login</h2>
+      <input id="email" type="email" placeholder="Email" />
+      <input id="password" type="password" placeholder="Password" />
+      <button id="loginBtn">Login</button>
+      <button id="resetBtn" class="secondary">Password Reset</button>
+      <p id="loginMsg"></p>
+    </section>
+
+    <section id="appPanel" class="hidden">
+      <div class="topbar">
+        <strong id="userEmail"></strong>
+        <button id="logoutBtn">Logout</button>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <h2>विद्यार्थी नोंदणी</h2>
+          <input id="studentName" placeholder="विद्यार्थ्याचे नाव" />
+          <input id="studentClass" placeholder="इयत्ता उदा. 8वी" />
+          <input id="studentRoll" placeholder="रोल नंबर" />
+          <input id="parentMobile" placeholder="पालक मोबाईल नंबर" maxlength="10" />
+          <button id="addStudentBtn">विद्यार्थी Save करा</button>
+          <p id="studentMsg"></p>
+        </section>
+
+        <section class="card">
+          <h2>शिक्षक नोंदणी</h2>
+          <input id="teacherName" placeholder="शिक्षकाचे नाव" />
+          <input id="teacherSubject" placeholder="विषय" />
+          <input id="teacherMobile" placeholder="मोबाईल नंबर" maxlength="10" />
+          <button id="addTeacherBtn">शिक्षक Save करा</button>
+          <p id="teacherMsg"></p>
+        </section>
+
+        <section class="card">
+          <h2>उपस्थिती नोंद</h2>
+          <select id="attendanceType">
+            <option value="student">विद्यार्थी</option>
+            <option value="teacher">शिक्षक</option>
+          </select>
+          <input id="personName" placeholder="नाव" />
+          <input id="attendanceClass" placeholder="वर्ग / विभाग" />
+          <select id="status">
+            <option value="Present">Present / उपस्थित</option>
+            <option value="Absent">Absent / अनुपस्थित</option>
+            <option value="Leave">Leave / रजा</option>
+          </select>
+          <input id="attendanceDate" type="date" />
+          <button id="addAttendanceBtn">उपस्थिती Save करा</button>
+          <p id="attendanceMsg"></p>
+        </section>
+
+        <section class="card">
+          <h2>अभ्यासक्रम / लिंक</h2>
+          <input id="linkTitle" placeholder="उदा. इयत्ता 10 गणित भाग 1" />
+          <input id="linkUrl" placeholder="PDF / Website Link" />
+          <button id="addLinkBtn">Link Save करा</button>
+          <p id="linkMsg"></p>
+        </section>
+      </div>
+
+      <section class="card">
+        <h2>Latest Attendance Report</h2>
+        <button id="loadReportBtn">Report पाहा</button>
+        <button id="exportCsvBtn" class="secondary">CSV Download</button>
+        <table>
+          <thead><tr><th>दिनांक</th><th>प्रकार</th><th>नाव</th><th>वर्ग</th><th>Status</th></tr></thead>
+          <tbody id="reportBody"></tbody>
+        </table>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
