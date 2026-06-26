@@ -1,52 +1,54 @@
 <!DOCTYPE html>
 <html lang="mr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>School Management V5.1 Professional</title>
-  <link rel="stylesheet" href="./style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>शाळा व्यवस्थापन V5.2</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<header class="topbar">
-  <h1>विद्यार्थी उपस्थिती व्यवस्थापन V5.1</h1>
-  <p>Professional School ERP + WhatsBot API + Excel Upload</p>
+<header class="hero">
+  <h1>स्व. गुरुबक्षसिंग साबरवार माध्यमिक व उच्च माध्यमिक विद्यालय, नायगाव (भिकापूर)</h1>
+  <p>इयत्ता 8वी / 9वी / 10वी – गणित Attendance, Homework, Notice Web App</p>
 </header>
 
-<main class="container">
+<main class="wrap">
 <section id="loginCard" class="card login-card">
   <h2>Login</h2>
   <input id="email" type="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
   <button id="loginBtn">Login</button>
-  <button id="resetBtn" class="secondary">Password Reset</button>
+  <button id="resetBtn" class="btn2">Password Reset</button>
   <p id="loginMsg" class="msg"></p>
 </section>
 
 <section id="appPanel" class="hidden">
   <div class="userbar">
-    <strong id="userEmail"></strong>
+    <b id="userEmail"></b>
     <button id="logoutBtn" class="danger">Logout</button>
   </div>
 
-  <nav class="tabs">
-    <button data-tab="student" class="active">विद्यार्थी</button>
+  <nav class="nav">
+    <button data-tab="students" class="active">विद्यार्थी</button>
     <button data-tab="attendance">उपस्थिती</button>
-    <button data-tab="notice">सूचना/कार्यक्रम</button>
-    <button data-tab="whatsapp">WhatsBot API</button>
-    <button data-tab="study">अभ्यासक्रम</button>
-    <button data-tab="excel">Excel/CSV Upload</button>
+    <button data-tab="mathhomework">गणित गृहपाठ</button>
+    <button data-tab="notice">सूचना</button>
+    <button data-tab="templates">Templates</button>
+    <button data-tab="settings">Settings</button>
+    <button data-tab="study">पुस्तके/लिंक</button>
+    <button data-tab="excel">Excel Upload</button>
     <button data-tab="reports">Reports</button>
   </nav>
 
-  <section id="student" class="tab active">
-    <div class="grid">
-      <div class="card">
-        <h2>विद्यार्थी सविस्तर नोंदणी</h2>
+  <section id="students" class="tab active">
+    <div class="card">
+      <h2>विद्यार्थी सविस्तर माहिती</h2>
+      <div class="formgrid">
         <input id="studentName" placeholder="विद्यार्थ्याचे पूर्ण नाव">
         <input id="studentDob" type="date" placeholder="जन्मदिनांक">
         <input id="studentAadhaar" maxlength="12" placeholder="आधार कार्ड 12 अंक">
         <input id="studentClass" placeholder="इयत्ता">
-        <input id="studentSection" placeholder="तुकडी / विभाग">
+        <input id="studentSection" placeholder="तुकडी">
         <input id="studentRoll" placeholder="रोल नंबर">
         <input id="studentAddress" placeholder="पत्ता">
         <input id="fatherName" placeholder="वडिलांचे नाव">
@@ -54,177 +56,166 @@
         <input id="parentMobile1" maxlength="10" placeholder="पालक मोबाईल 1">
         <input id="parentMobile2" maxlength="10" placeholder="पालक मोबाईल 2">
         <input id="parentMobile3" maxlength="10" placeholder="पालक मोबाईल 3">
-        <input id="studentPhotoUrl" placeholder="फोटो URL / Camera photo data">
-        <video id="cameraPreview" autoplay playsinline></video>
-        <canvas id="photoCanvas" class="hidden"></canvas>
-        <img id="photoPreview" alt="">
-        <button id="startCamera" type="button">मोबाईल Camera सुरू करा</button>
-        <button id="capturePhoto" type="button" class="secondary">फोटो काढा</button>
-        <button id="addStudentBtn">विद्यार्थी Save करा</button>
-        <p id="studentMsg" class="msg"></p>
       </div>
-
-      <div class="card">
-        <h2>शिक्षक / अधिकारी नोंदणी</h2>
-        <input id="teacherName" placeholder="नाव">
-        <input id="teacherRole" placeholder="पद: मुख्याध्यापक/शिक्षक/अधिकारी">
-        <input id="teacherSubject" placeholder="विषय">
-        <input id="teacherMobile" maxlength="10" placeholder="मोबाईल नंबर">
-        <button id="addTeacherBtn">Save करा</button>
-        <p id="teacherMsg" class="msg"></p>
-      </div>
+      <h3>मोबाईल कॅमेरा फोटो</h3>
+      <video id="cameraPreview" autoplay playsinline></video>
+      <canvas id="photoCanvas" class="hidden"></canvas>
+      <img id="photoPreview">
+      <input id="studentPhotoUrl" placeholder="फोटो URL / Captured Photo">
+      <button id="startCamera">Camera सुरू करा</button>
+      <button id="capturePhoto" class="btn2">फोटो काढा</button>
+      <button id="addStudentBtn">विद्यार्थी Save करा</button>
+      <p id="studentMsg" class="msg"></p>
     </div>
   </section>
 
   <section id="attendance" class="tab">
-    <div class="grid">
-      <div class="card">
-        <h2>विद्यार्थी उपस्थिती</h2>
-        <select id="studentAttendanceStatus">
-          <option value="Present">पूर्ण दिवस उपस्थित</option>
-          <option value="Half Day">हाफ डे उपस्थित</option>
-          <option value="Absent">अनुपस्थित</option>
-          <option value="Leave">रजा</option>
-          <option value="Late">उशिरा आले</option>
-          <option value="Early Leave">लवकर घरी गेले</option>
-        </select>
-        <input id="attendanceStudentName" placeholder="विद्यार्थी नाव">
-        <input id="attendanceClass" placeholder="वर्ग / विभाग">
-        <input id="attendanceReason" placeholder="कारण / टिप्पणी">
-        <input id="attendanceDate" type="date">
-        <input id="attendanceParentMobile" placeholder="पालक मोबाईल 91 सहित">
-        <button id="addStudentAttendanceBtn">उपस्थिती Save करा</button>
-        <button id="sendAttendanceWhatsapp" class="secondary">पालकांना WhatsApp पाठवा</button>
-        <p id="attendanceMsg" class="msg"></p>
+    <div class="card">
+      <h2>उपस्थिती P/A</h2>
+      <label>इयत्ता</label>
+      <select id="attClass"><option>8वी</option><option selected>9वी</option><option>10वी</option></select>
+      <label>दिनांक</label>
+      <input id="attDate" type="date">
+      <div class="scroll">
+        <table id="attTable">
+          <thead><tr><th>Roll</th><th>Name</th><th>P/A</th><th>Time</th><th>Message</th><th>WhatsApp</th><th>SMS</th></tr></thead>
+          <tbody id="attBody"></tbody>
+        </table>
       </div>
+      <button id="loadStudentList">विद्यार्थी यादी लोड करा</button>
+      <button id="saveAttendanceAll">Attendance Save करा</button>
+      <p id="attMsg" class="msg"></p>
+    </div>
+    <div class="card">
+      <h2>शिक्षक उपस्थिती</h2>
+      <input id="teacherAttName" placeholder="शिक्षक नाव">
+      <select id="teacherAttStatus"><option>उपस्थित</option><option>हाफ डे</option><option>अनुपस्थित</option><option>रजा</option><option>उशिरा आले</option></select>
+      <input id="teacherAttDate" type="date">
+      <textarea id="teacherAttNote" placeholder="कारण / टिप्पणी"></textarea>
+      <button id="saveTeacherAttendance">Save करा</button>
+      <p id="teacherAttMsg" class="msg"></p>
+    </div>
+  </section>
 
-      <div class="card">
-        <h2>शिक्षक उपस्थिती</h2>
-        <select id="teacherAttendanceStatus">
-          <option value="Present">उपस्थित</option>
-          <option value="Half Day">हाफ डे</option>
-          <option value="Absent">अनुपस्थित</option>
-          <option value="Leave">रजा</option>
-          <option value="Late">उशिरा आले</option>
-        </select>
-        <input id="teacherAttendanceName" placeholder="शिक्षक नाव">
-        <input id="teacherAttendanceReason" placeholder="कारण / टिप्पणी">
-        <input id="teacherAttendanceDate" type="date">
-        <button id="addTeacherAttendanceBtn">शिक्षक उपस्थिती Save करा</button>
-        <p id="teacherAttendanceMsg" class="msg"></p>
-      </div>
+  <section id="mathhomework" class="tab">
+    <div class="card">
+      <h2>गणित – वर्गात झालेला अभ्यास व गृहपाठ</h2>
+      <label>इयत्ता</label>
+      <select id="mathClass"><option>8वी</option><option selected>9वी</option><option>10वी</option></select>
+      <label>दिनांक</label>
+      <input id="mathDate" type="date">
+      <label>वर्ग शिक्षक / विशेष शिक्षक</label>
+      <input id="mathTeacherName" placeholder="उदा. पवार सर / गणित शिक्षक">
+      <label>धडा / Topic</label>
+      <input id="mathTopic" placeholder="उदा. रेषीय समीकरणे">
+      <label>वर्गात झालेला अभ्यास</label>
+      <textarea id="classworkDone"></textarea>
+      <label>दिलेला गणित गृहपाठ</label>
+      <textarea id="mathHomework"></textarea>
+      <input id="mathMobile" placeholder="पालक मोबाईल 91 सहित / रिक्त असल्यास फक्त Save">
+      <button id="previewMathMsg">Message Preview</button>
+      <button id="saveMathWork">Save</button>
+      <button id="sendMathWhatsapp" class="btn2">WhatsApp पाठवा</button>
+      <p id="mathPreview" class="preview"></p>
+      <p id="mathMsg" class="msg"></p>
     </div>
   </section>
 
   <section id="notice" class="tab">
-    <div class="grid">
-      <div class="card">
-        <h2>गृहपाठ</h2>
-        <input id="homeworkClass" placeholder="इयत्ता">
-        <input id="homeworkSubject" placeholder="विषय">
-        <textarea id="homeworkText" placeholder="गृहपाठ"></textarea>
-        <input id="homeworkMobile" placeholder="मोबाईल 91 सहित">
-        <button id="sendHomeworkBtn">Save + WhatsApp</button>
-        <p id="homeworkMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>सुट्टीची सूचना</h2>
-        <input id="holidayTitle" placeholder="कारण">
-        <input id="holidayDate" type="date">
-        <textarea id="holidayText" placeholder="सुट्टीची सूचना"></textarea>
-        <input id="holidayMobile" placeholder="मोबाईल 91 सहित">
-        <button id="sendHolidayBtn">Save + WhatsApp</button>
-        <p id="holidayMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>शैक्षणिक कार्यक्रम</h2>
-        <input id="eventTitle" placeholder="कार्यक्रमाचे नाव">
-        <input id="eventDate" type="date">
-        <textarea id="eventText" placeholder="कार्यक्रम माहिती"></textarea>
-        <input id="eventMobile" placeholder="मोबाईल 91 सहित">
-        <button id="sendEventBtn">Save + WhatsApp</button>
-        <p id="eventMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>क्रीडा कार्यक्रम</h2>
-        <input id="sportsTitle" placeholder="क्रीडा कार्यक्रम">
-        <input id="sportsDate" type="date">
-        <textarea id="sportsText" placeholder="क्रीडा सूचना"></textarea>
-        <input id="sportsMobile" placeholder="मोबाईल 91 सहित">
-        <button id="sendSportsBtn">Save + WhatsApp</button>
-        <p id="sportsMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>परीक्षा सूचना</h2>
-        <input id="examTitle" placeholder="परीक्षा">
-        <input id="examClass" placeholder="इयत्ता">
-        <input id="examDate" type="date">
-        <textarea id="examText" placeholder="परीक्षा संदर्भातील मेसेज"></textarea>
-        <input id="examMobile" placeholder="मोबाईल 91 सहित">
-        <button id="sendExamBtn">Save + WhatsApp</button>
-        <p id="examMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>फी सूचना</h2>
-        <input id="feeStudent" placeholder="विद्यार्थी नाव">
-        <input id="feeAmount" placeholder="रक्कम">
-        <input id="feeDue" type="date">
-        <textarea id="feeText" placeholder="फी भरण्याची सूचना"></textarea>
-        <input id="feeMobile" placeholder="मोबाईल 91 सहित">
-        <button id="sendFeeBtn">Save + WhatsApp</button>
-        <p id="feeMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>वर्गात झालेले कार्य</h2>
-        <input id="classworkClass" placeholder="इयत्ता">
-        <input id="classworkSubject" placeholder="विषय">
-        <textarea id="classworkText" placeholder="आज वर्गात काय कार्य झाले"></textarea>
-        <input id="classworkMobile" placeholder="मोबाईल 91 सहित">
-        <button id="sendClassworkBtn">Save + WhatsApp</button>
-        <p id="classworkMsg" class="msg"></p>
-      </div>
+    <div class="card">
+      <h2>पालक सभा / सुट्टी / परीक्षा / शैक्षणिक सूचना</h2>
+      <label>इयत्ता</label>
+      <select id="noticeClass"><option>8वी</option><option selected>9वी</option><option>10वी</option><option>सर्व</option></select>
+      <label>वर्ग शिक्षक / विशेष शिक्षक नाव</label>
+      <input id="noticeTeacherName" placeholder="उदा. वर्ग शिक्षक / विशेष शिक्षक">
+      <label>Notice Type</label>
+      <select id="noticeType">
+        <option>पालक सभा</option>
+        <option>सुट्टीची सूचना</option>
+        <option>परीक्षा सूचना</option>
+        <option>शैक्षणिक कार्यक्रम</option>
+        <option>क्रीडा कार्यक्रम</option>
+        <option>फी सूचना</option>
+        <option>सर्वसाधारण सूचना</option>
+      </select>
+      <label>दिनांक</label>
+      <input id="noticeDate" type="date">
+      <label>वेळ</label>
+      <input id="noticeTime" type="time">
+      <label>तपशील / कारण</label>
+      <textarea id="noticeDetail"></textarea>
+      <input id="noticeMobile" placeholder="मोबाईल 91 सहित / रिक्त असल्यास फक्त Save">
+      <button id="templateApplyBtn">Template Auto Fill</button>
+      <button id="previewNotice">Message Preview</button>
+      <button id="saveNotice">Save</button>
+      <button id="sendNoticeWhatsapp" class="btn2">WhatsApp पाठवा</button>
+      <button id="classWiseLinks" class="btn2">Class-wise WhatsApp Links</button>
+      <p id="noticePreview" class="preview"></p>
+      <p id="noticeMsg" class="msg"></p>
     </div>
   </section>
 
-  <section id="whatsapp" class="tab">
-    <div class="grid">
-      <div class="card">
-        <h2>WhatsBot API Settings</h2>
-        <input id="apiToken" placeholder="API Token">
-        <input id="deviceId" placeholder="Device ID">
-        <input id="apiBase" value="https://whatsbot.tech/api">
-        <button id="saveApiSettings">Settings Save</button>
-        <p id="apiSettingsMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>Manual Text Send</h2>
-        <input id="apiMobile" placeholder="मोबाईल 91 सहित">
-        <textarea id="apiMessage" placeholder="Message"></textarea>
-        <button id="sendApiText">Send Text</button>
-        <p id="apiTextMsg" class="msg"></p>
-      </div>
-      <div class="card">
-        <h2>Image / Doc / Video Send</h2>
-        <input id="mediaMobile" placeholder="मोबाईल 91 सहित">
-        <select id="mediaType"><option value="img">Image</option><option value="doc">Document</option><option value="video">Video</option></select>
-        <input id="mediaUrl" placeholder="Media URL">
-        <input id="mediaCaption" placeholder="Caption">
-        <button id="sendMediaBtn">Send Media</button>
-        <p id="mediaMsg" class="msg"></p>
-      </div>
+  <section id="templates" class="tab">
+    <div class="card">
+      <h2>तयार WhatsApp/SMS Templates</h2>
+      <select id="templateSelect">
+        <option value="attendance_present">विद्यार्थी उपस्थित</option>
+        <option value="attendance_absent">विद्यार्थी अनुपस्थित</option>
+        <option value="half_day">हाफ डे उपस्थिती</option>
+        <option value="holiday">सुट्टीची सूचना</option>
+        <option value="exam">परीक्षा सूचना</option>
+        <option value="ptm">पालक सभा</option>
+        <option value="sports">क्रीडा कार्यक्रम</option>
+        <option value="education_event">शैक्षणिक कार्यक्रम</option>
+        <option value="homework">गृहपाठ</option>
+        <option value="fee">फी सूचना</option>
+      </select>
+      <button id="copyTemplateBtn">Template Copy करा</button>
+      <textarea id="templateText"></textarea>
+      <p class="hint">Variables: {student}, {class}, {date}, {time}, {teacher}, {topic}, {school}</p>
+    </div>
+  </section>
+
+  <section id="settings" class="tab">
+    <div class="card">
+      <h2>WhatsBot API Settings</h2>
+      <input id="apiBase" value="https://whatsbot.tech/api" placeholder="API Base URL">
+      <input id="apiToken" placeholder="API Token">
+      <input id="deviceId" placeholder="Device ID">
+      <button id="saveApiSettings">Settings Save</button>
+      <p id="apiSettingsMsg" class="msg"></p>
+    </div>
+    <div class="card">
+      <h2>मुख्याध्यापक / अधिकारी नंबर</h2>
+      <textarea id="officerNumbers" placeholder="प्रत्येक नंबर नवीन ओळीत 91 सहित"></textarea>
+      <button id="saveOfficerNumbers">Officer Numbers Save</button>
+      <p id="officerMsg" class="msg"></p>
+    </div>
+    <div class="card">
+      <h2>Manual WhatsBot Send</h2>
+      <input id="manualMobile" placeholder="मोबाईल 91 सहित">
+      <textarea id="manualText" placeholder="Message"></textarea>
+      <button id="sendManualText">Text Send</button>
+      <select id="mediaType"><option value="img">Image</option><option value="doc">Document</option><option value="video">Video</option></select>
+      <input id="mediaUrl" placeholder="Media URL">
+      <input id="mediaCaption" placeholder="Caption">
+      <button id="sendMedia">Media Send</button>
+      <p id="manualMsg" class="msg"></p>
     </div>
   </section>
 
   <section id="study" class="tab">
     <div class="card">
-      <h2>महाराष्ट्र राज्य मंडळ पुस्तके / नोट्स / लिंक</h2>
-      <p>Copyright मुळे खासगी पुस्तक PDF थेट देऊ नये. अधिकृत eBalbharati / DIKSHA / परवानगी असलेले Navneet links जोडा.</p>
-      <a target="_blank" href="https://books.ebalbharati.in/">eBalbharati Official Books</a> |
-      <a target="_blank" href="https://ebalbharati.in/">Balbharati</a> |
-      <a target="_blank" href="https://diksha.gov.in/">DIKSHA</a>
+      <h2>महाराष्ट्र स्टेट बोर्ड – पुस्तके / नोट्स / लिंक</h2>
+      <p>अधिकृत/परवानगी असलेले links जोडा. खासगी copyright पुस्तके थेट upload करू नयेत.</p>
+      <div class="links">
+        <a target="_blank" href="https://books.ebalbharati.in/">eBalbharati Official Books</a>
+        <a target="_blank" href="https://ebalbharati.in/">Balbharati</a>
+        <a target="_blank" href="https://diksha.gov.in/">DIKSHA</a>
+      </div>
       <input id="studyClass" placeholder="8वी/9वी/10वी">
       <input id="studySubject" placeholder="गणित / आरोग्य व शारीरिक शिक्षण">
-      <input id="studyTitle" placeholder="Book / Notes / गणित प्रयोग वही">
+      <input id="studyTitle" placeholder="Book / Notes / गणित प्रयोग वही / Navneet Link">
       <input id="studyUrl" placeholder="PDF / Website URL">
       <button id="saveStudyLink">Study Link Save</button>
       <p id="studyMsg" class="msg"></p>
@@ -245,11 +236,12 @@
   <section id="reports" class="tab">
     <div class="card">
       <h2>Reports</h2>
-      <button id="loadStudentsBtn">Students Report</button>
-      <button id="loadAttendanceBtn">Attendance Report</button>
-      <button id="loadNoticesBtn">Notices Report</button>
-      <button id="exportCsvBtn" class="secondary">CSV Download</button>
-      <div class="table-wrap"><table><thead id="reportHead"></thead><tbody id="reportBody"></tbody></table></div>
+      <button id="loadStudentsReport">Students</button>
+      <button id="loadAttendanceReport">Attendance</button>
+      <button id="loadNoticeReport">Notice</button>
+      <button id="loadMathReport">Math Homework</button>
+      <button id="exportCsvBtn" class="btn2">CSV Download</button>
+      <div class="scroll"><table><thead id="reportHead"></thead><tbody id="reportBody"></tbody></table></div>
     </div>
   </section>
 </section>
