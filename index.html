@@ -1,181 +1,124 @@
 <!doctype html>
 <html lang="mr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>विद्यार्थी उपस्थिती व्यवस्थापन V4.3</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>विद्यार्थी उपस्थिती व्यवस्थापन V5.0</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <header class="hero">
-    <div>
-      <p class="eyebrow">Firebase Cloud + WhatsBot API आधारित Admin Panel</p>
-      <h1>विद्यार्थी उपस्थिती व्यवस्थापन V4.3</h1>
-      <p>विद्यार्थी माहिती, शिक्षक, अधिकारी संपर्क, उपस्थिती, कार्यक्रम आणि WhatsApp API सूचना</p>
-    </div>
-  </header>
-
-  <main class="container">
-    <section id="loginCard" class="card login-card">
-      <h2>Login</h2>
-      <input id="email" type="email" placeholder="Email" autocomplete="username" />
-      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
-      <div class="row-actions">
-        <button id="loginBtn">Login</button>
-        <button id="resetBtn" class="secondary">Password Reset</button>
-      </div>
-      <p id="loginMsg" class="msg"></p>
+<header class="hero">
+  <h1>विद्यार्थी उपस्थिती व्यवस्थापन V5.0</h1>
+  <p>Firebase Cloud + WhatsBot API आधारित Professional School ERP</p>
+</header>
+<main class="container">
+  <section id="loginCard" class="card login-card">
+    <h2>Login</h2>
+    <input id="email" type="email" placeholder="Email" autocomplete="username">
+    <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+    <div class="row"><button id="loginBtn">Login</button><button id="resetBtn" class="secondary">Password Reset</button></div>
+    <p id="loginMsg" class="msg"></p>
+  </section>
+  <section id="appPanel" class="hidden">
+    <div class="topbar"><strong id="userEmail"></strong><button id="logoutBtn">Logout</button></div>
+    <section class="grid stats">
+      <div class="stat"><b id="studentCount">0</b><span>विद्यार्थी</span></div>
+      <div class="stat"><b id="teacherCount">0</b><span>शिक्षक</span></div>
+      <div class="stat"><b id="attendanceCount">0</b><span>उपस्थिती</span></div>
+      <div class="stat"><b id="noticeCount">0</b><span>सूचना</span></div>
     </section>
 
-    <section id="appPanel" class="hidden">
-      <div class="topbar card">
-        <div>
-          <strong id="userEmail"></strong>
-          <p class="muted">Admin Dashboard</p>
-        </div>
-        <button id="logoutBtn" class="danger">Logout</button>
+    <section class="card">
+      <h2>WhatsBot API Settings</h2>
+      <div class="grid two">
+        <input id="apiToken" placeholder="WhatsBot API Token">
+        <input id="deviceId" placeholder="Device ID उदा. 46081">
+        <input id="schoolName" placeholder="शाळेचे नाव" value="GBS SCHOOL">
+        <input id="senderMobile" placeholder="Linked WhatsApp No. 91xxxxxxxxxx">
       </div>
+      <button id="saveApiBtn">API Settings Save करा</button>
+      <p id="apiMsg" class="msg"></p>
+    </section>
 
-      <section class="stats-grid">
-        <div class="stat"><span id="studentCount">0</span><p>विद्यार्थी</p></div>
-        <div class="stat"><span id="teacherCount">0</span><p>शिक्षक</p></div>
-        <div class="stat"><span id="attendanceCount">0</span><p>उपस्थिती नोंदी</p></div>
-        <div class="stat"><span id="messageCount">0</span><p>API मेसेज लॉग</p></div>
-      </section>
-
-      <section class="card">
-        <h2>WhatsBot API Settings</h2>
-        <div class="grid two">
-          <input id="apiToken" placeholder="WhatsBot API Token" />
-          <input id="deviceId" placeholder="Device ID (optional)" />
-          <input id="defaultSchoolMobile" placeholder="शाळेचा WhatsApp नंबर उदा. 9194XXXXXXXX" />
-          <input id="schoolName" placeholder="शाळेचे नाव" value="GBS SCHOOL" />
-        </div>
-        <div class="row-actions">
-          <button id="saveApiSettingsBtn">API Settings Save करा</button>
-          <button id="testApiBtn" class="secondary">Test Message पाठवा</button>
-        </div>
-        <p id="apiMsg" class="msg"></p>
-        <p class="hint">टीप: mobile नंबर country code सहित द्या. उदा. 91XXXXXXXXXX. WhatsBot मध्ये Linked Device Active असणे आवश्यक आहे.</p>
-      </section>
-
-      <section class="grid four">
-        <div class="card">
-          <h2>विद्यार्थी सविस्तर नोंदणी</h2>
-          <input id="studentName" placeholder="विद्यार्थ्याचे पूर्ण नाव" />
-          <input id="studentDob" type="date" placeholder="जन्मदिनांक" />
-          <input id="studentAadhaar" maxlength="12" placeholder="आधार क्रमांक 12 अंक" />
-          <input id="studentClass" placeholder="इयत्ता / वर्ग" />
-          <input id="studentDivision" placeholder="तुकडी / विभाग" />
-          <input id="studentRoll" placeholder="रोल नंबर" />
-          <input id="studentAddress" placeholder="पत्ता" />
-          <input id="parentName" placeholder="पालकांचे नाव" />
-          <input id="parentMobile" maxlength="10" placeholder="पालक मोबाईल नंबर 10 अंक" />
-          <input id="studentPhotoUrl" placeholder="फोटो URL / Google Drive link" />
-          <textarea id="studentEducationInfo" placeholder="इतर शैक्षणिक बाबी / विशेष नोंदी"></textarea>
-          <button id="addStudentBtn">विद्यार्थी Save करा</button>
-          <p id="studentMsg" class="msg"></p>
-        </div>
-
-        <div class="card">
-          <h2>शिक्षक नोंदणी</h2>
-          <input id="teacherName" placeholder="शिक्षकाचे नाव" />
-          <input id="teacherSubject" placeholder="विषय" />
-          <input id="teacherMobile" maxlength="10" placeholder="मोबाईल नंबर 10 अंक" />
-          <input id="teacherEmail" placeholder="Email" />
-          <button id="addTeacherBtn">शिक्षक Save करा</button>
-          <p id="teacherMsg" class="msg"></p>
-        </div>
-
-        <div class="card">
-          <h2>मुख्याध्यापक / अधिकारी नंबर</h2>
-          <input id="officerName" placeholder="नाव" />
-          <input id="officerRole" placeholder="पद उदा. मुख्याध्यापक / अधिकारी" />
-          <input id="officerMobile" placeholder="WhatsApp नंबर 91 सहित" />
-          <input id="officerAltMobile" placeholder="पर्यायी नंबर" />
-          <input id="officerEmail" placeholder="Email" />
-          <button id="addOfficerBtn">अधिकारी Save करा</button>
-          <p id="officerMsg" class="msg"></p>
-        </div>
-
-        <div class="card">
-          <h2>उपस्थिती नोंद</h2>
-          <select id="attendanceType">
-            <option value="student">विद्यार्थी</option>
-            <option value="teacher">शिक्षक</option>
-          </select>
-          <input id="personName" placeholder="नाव" />
-          <input id="attendanceClass" placeholder="वर्ग / विभाग / विषय" />
-          <select id="status">
-            <option value="Present">Present / उपस्थित</option>
-            <option value="Absent">Absent / अनुपस्थित</option>
-            <option value="Leave">Leave / रजा</option>
-          </select>
-          <input id="attendanceDate" type="date" />
-          <button id="addAttendanceBtn">उपस्थिती Save करा</button>
-          <button id="sendAttendanceWhatsAppBtn" class="secondary">पालकांना WhatsApp पाठवा</button>
-          <p id="attendanceMsg" class="msg"></p>
-        </div>
-      </section>
-
-      <section class="grid two">
-        <div class="card">
-          <h2>अभ्यासक्रम / लिंक</h2>
-          <input id="linkTitle" placeholder="उदा. इयत्ता 10 गणित भाग 1" />
-          <input id="linkUrl" placeholder="PDF / Website Link" />
-          <button id="addLinkBtn">Link Save करा</button>
-          <button id="sendLinkWhatsAppBtn" class="secondary">Link WhatsApp API ने पाठवा</button>
-          <p id="linkMsg" class="msg"></p>
-        </div>
-
-        <div class="card">
-          <h2>कार्यक्रम / शैक्षणिक सूचना</h2>
-          <input id="eventTitle" placeholder="कार्यक्रमाचे नाव" />
-          <input id="eventDate" type="date" />
-          <textarea id="eventDetails" placeholder="कार्यक्रम/सूचना सविस्तर माहिती"></textarea>
-          <button id="addEventBtn">कार्यक्रम Save करा</button>
-          <button id="sendEventWhatsAppBtn" class="secondary">अधिकाऱ्यांना WhatsApp पाठवा</button>
-          <p id="eventMsg" class="msg"></p>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>WhatsApp API Message Center</h2>
-        <div class="grid two">
-          <input id="waMobile" placeholder="Mobile 91 सहित, comma separated चालेल" />
-          <select id="waType">
-            <option value="sms">Text Message</option>
-            <option value="img">Image URL</option>
-            <option value="doc">Document URL</option>
-            <option value="video">Video URL</option>
-          </select>
-          <textarea id="waMessage" placeholder="Message / Caption"></textarea>
-          <input id="waMediaUrl" placeholder="Image/Document/Video URL" />
-        </div>
-        <div class="row-actions">
-          <button id="sendWaBtn">WhatsBot API ने पाठवा</button>
-          <button id="openWaLinkBtn" class="secondary">Direct WhatsApp Link</button>
-        </div>
+    <section class="grid two">
+      <div class="card">
+        <h2>अधिकारी / संपर्क नंबर</h2>
+        <input id="headmasterName" placeholder="मुख्याध्यापक नाव">
+        <input id="headmasterMobile" placeholder="मुख्याध्यापक WhatsApp नंबर">
+        <input id="officer1" placeholder="अधिकारी नंबर 1">
+        <input id="officer2" placeholder="अधिकारी नंबर 2">
+        <input id="officer3" placeholder="अधिकारी नंबर 3">
+        <textarea id="extraOfficers" placeholder="इतर नंबर comma ने लिहा"></textarea>
+        <button id="saveContactsBtn">संपर्क Save करा</button>
+        <p id="contactsMsg" class="msg"></p>
+      </div>
+      <div class="card">
+        <h2>WhatsApp Quick Send</h2>
+        <select id="waType"><option value="send_sms">Text Message</option><option value="send_img">Image</option><option value="send_doc">Document/PDF</option><option value="send_video">Video</option></select>
+        <input id="waMobile" placeholder="Mobile 91xxxxxxxxxx किंवा अनेक नंबर comma ने">
+        <textarea id="waMessage" placeholder="Message"></textarea>
+        <input id="mediaUrl" placeholder="Image/Doc/Video URL">
+        <button id="sendWaBtn">WhatsApp API ने पाठवा</button>
+        <a id="openWaLink" class="linkbtn" target="_blank">WhatsApp Link उघडा</a>
         <p id="waMsg" class="msg"></p>
-      </section>
-
-      <section class="card">
-        <h2>Latest Attendance Report</h2>
-        <div class="row-actions">
-          <button id="loadReportBtn">Report पाहा</button>
-          <button id="exportCsvBtn" class="secondary">CSV Download</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>दिनांक</th><th>प्रकार</th><th>नाव</th><th>वर्ग</th><th>Status</th></tr></thead>
-            <tbody id="reportBody"></tbody>
-          </table>
-        </div>
-      </section>
+      </div>
     </section>
-  </main>
 
-  <iframe id="apiFrame" class="hidden"></iframe>
-  <script type="module" src="./app.js"></script>
+    <section class="grid two">
+      <div class="card">
+        <h2>सविस्तर विद्यार्थी माहिती</h2>
+        <input id="studentName" placeholder="विद्यार्थ्याचे पूर्ण नाव">
+        <div class="grid two"><input id="studentClass" placeholder="इयत्ता"><input id="studentDiv" placeholder="तुकडी"></div>
+        <div class="grid two"><input id="studentRoll" placeholder="रोल नंबर"><input id="studentDob" type="date" placeholder="जन्मदिनांक"></div>
+        <input id="aadhar" placeholder="आधार क्रमांक 12 अंक">
+        <input id="studentPhoto" placeholder="फोटो URL">
+        <input id="fatherName" placeholder="वडिलांचे नाव"><input id="motherName" placeholder="आईचे नाव">
+        <input id="parentMobile1" placeholder="पालक मोबाईल 1"><input id="parentMobile2" placeholder="पालक मोबाईल 2"><input id="parentMobile3" placeholder="पालक मोबाईल 3">
+        <textarea id="address" placeholder="पत्ता / आरोग्य / इतर माहिती"></textarea>
+        <button id="addStudentBtn">विद्यार्थी Save करा</button>
+        <p id="studentMsg" class="msg"></p>
+      </div>
+      <div class="card">
+        <h2>शिक्षक नोंदणी</h2>
+        <input id="teacherName" placeholder="शिक्षकाचे नाव"><input id="teacherSubject" placeholder="विषय"><input id="teacherMobile" placeholder="मोबाईल नंबर">
+        <button id="addTeacherBtn">शिक्षक Save करा</button><p id="teacherMsg" class="msg"></p>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>उपस्थिती / अर्धवेळ / रजा नोंद</h2>
+        <select id="attendanceType"><option value="student">विद्यार्थी</option><option value="teacher">शिक्षक</option></select>
+        <input id="personName" placeholder="नाव"><input id="attendanceClass" placeholder="वर्ग / विभाग">
+        <select id="status"><option>Present</option><option>Absent</option><option>Half Day</option><option>Late Coming</option><option>Leave Early</option><option>Leave With Permission</option><option>Sick Leave</option></select>
+        <input id="attendanceDate" type="date"><textarea id="attendanceReason" placeholder="कारण / टिप्पणी"></textarea>
+        <input id="attendanceParentMobile" placeholder="पालक/संपर्क WhatsApp नंबर">
+        <label><input id="notifyParent" type="checkbox" checked> पालकांना WhatsApp सूचना पाठवा</label>
+        <button id="addAttendanceBtn">उपस्थिती Save करा</button><p id="attendanceMsg" class="msg"></p>
+      </div>
+      <div class="card">
+        <h2>सूचना / गृहपाठ / परीक्षा / कार्यक्रम</h2>
+        <select id="noticeCategory"><option>गृहपाठ</option><option>सुट्टी सूचना</option><option>परीक्षा सूचना</option><option>क्रीडा कार्यक्रम</option><option>शालेय कार्यक्रम</option><option>फी भरणा सूचना</option><option>पालक सभा</option><option>सर्वसाधारण सूचना</option></select>
+        <input id="noticeTitle" placeholder="शीर्षक"><textarea id="noticeMessage" placeholder="संदेश"></textarea>
+        <input id="noticeMobiles" placeholder="मोबाईल नंबर comma ने"><input id="noticeMedia" placeholder="PDF/Image/Video URL Optional">
+        <button id="saveNoticeBtn">सूचना Save करा</button><button id="sendNoticeBtn" class="secondary">सूचना WhatsApp ने पाठवा</button><p id="noticeMsg" class="msg"></p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>महाराष्ट्र स्टेट बोर्ड अभ्यासक्रम / नोट्स / लिंक्स</h2>
+      <div class="grid four"><select id="resourceClass"><option>8 वी</option><option>9 वी</option><option>10 वी</option></select><select id="resourceSubject"><option>गणित</option><option>आरोग्य व शारीरिक शिक्षण</option></select><input id="resourceTitle" placeholder="उदा. गणित प्रयोग वही"><input id="resourceUrl" placeholder="PDF/Website Link"></div>
+      <button id="addResourceBtn">Link Save करा</button><p id="resourceMsg" class="msg"></p>
+      <div id="resourceList" class="list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Latest Attendance Report</h2>
+      <button id="loadReportBtn">Report पाहा</button><button id="exportCsvBtn" class="secondary">CSV Download</button>
+      <table><thead><tr><th>दिनांक</th><th>प्रकार</th><th>नाव</th><th>वर्ग</th><th>Status</th><th>कारण</th></tr></thead><tbody id="reportBody"></tbody></table>
+    </section>
+  </section>
+</main>
+<script type="module" src="./app.js"></script>
 </body>
 </html>

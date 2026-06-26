@@ -1,215 +1,57 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, orderBy, limit, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 let currentRows = [];
+const $ = id => document.getElementById(id);
+const show = (id,msg)=>{ const el=$(id); if(el) el.textContent=msg; };
+const val = id => ($(id)?.value || '').trim();
+const validMobile = m => /^91\d{10}$/.test(m) || /^\d{10}$/.test(m);
+const to91 = m => { m=(m||'').replace(/\D/g,''); if(m.length===10) return '91'+m; return m; };
 
-const $ = (id) => document.getElementById(id);
-const show = (id, msg, isError=false) => { const el=$(id); if(!el) return; el.textContent = msg; el.classList.toggle('error', isError); };
-const validMobile10 = (m) => /^\d{10}$/.test(String(m||'').trim());
-const onlyDigits = (v) => String(v||'').replace(/\D/g,'');
-const today = () => new Date().toISOString().slice(0,10);
-
-function loadApiSettings(){
-  $('apiToken').value = localStorage.getItem('whatsbot_api_token') || '';
-  $('deviceId').value = localStorage.getItem('whatsbot_device_id') || '';
-  $('defaultSchoolMobile').value = localStorage.getItem('default_school_mobile') || '';
-  $('schoolName').value = localStorage.getItem('school_name') || 'GBS SCHOOL';
-  $('attendanceDate').value = today();
-  $('eventDate').value = today();
-}
-function saveApiSettings(){
-  localStorage.setItem('whatsbot_api_token', $('apiToken').value.trim());
-  localStorage.setItem('whatsbot_device_id', $('deviceId').value.trim());
-  localStorage.setItem('default_school_mobile', $('defaultSchoolMobile').value.trim());
-  localStorage.setItem('school_name', $('schoolName').value.trim());
-  show('apiMsg','API Settings save झाल्या.');
-}
-function getApi(){
-  return {
-    token: localStorage.getItem('whatsbot_api_token') || $('apiToken').value.trim(),
-    deviceId: localStorage.getItem('whatsbot_device_id') || $('deviceId').value.trim(),
-    schoolMobile: localStorage.getItem('default_school_mobile') || $('defaultSchoolMobile').value.trim(),
-    schoolName: localStorage.getItem('school_name') || $('schoolName').value.trim() || 'School'
-  };
-}
-function normalMobile(m){
-  const d = onlyDigits(m);
-  if(d.length === 10) return '91'+d;
-  return d;
-}
-function makeWhatsBotUrl(type, mobile, message, mediaUrl=''){
-  const api = getApi();
-  if(!api.token) throw new Error('WhatsBot API Token सेट करा.');
-  const params = new URLSearchParams();
-  params.set('api_token', api.token);
-  params.set('mobile', mobile);
-  if(api.deviceId) params.set('device_id', api.deviceId);
-  if(type === 'sms') {
-    params.set('message', message || '');
-    return `https://whatsbot.tech/api/send_sms?${params.toString()}`;
-  }
-  if(type === 'img') {
-    params.set('img_url', mediaUrl || '');
-    params.set('img_caption', message || '');
-    return `https://whatsbot.tech/api/send_img?${params.toString()}`;
-  }
-  if(type === 'doc') {
-    params.set('doc_url', mediaUrl || '');
-    return `https://whatsbot.tech/api/send_doc?${params.toString()}`;
-  }
-  if(type === 'video') {
-    params.set('video_url', mediaUrl || '');
-    return `https://whatsbot.tech/api/send_video?${params.toString()}`;
-  }
-  throw new Error('Invalid WhatsApp API type');
-}
-async function logMessage(payload){
-  try { await addDoc(collection(db,'message_logs'), {...payload, createdAt: serverTimestamp()}); } catch(e) {}
+async function getSettings(){
+  const snap = await getDoc(doc(db,'settings','whatsbot'));
+  return snap.exists()?snap.data():{};
 }
 async function sendWhatsBot(type, mobiles, message, mediaUrl=''){
-  const nums = String(mobiles||'').split(',').map(x=>normalMobile(x.trim())).filter(Boolean);
-  if(!nums.length) throw new Error('Mobile number द्या.');
-  const sent = [];
-  for(const mobile of nums){
-    const url = makeWhatsBotUrl(type, mobile, message, mediaUrl);
-    // no-cors is used because many third-party APIs do not allow browser CORS.
-    await fetch(url, { method:'GET', mode:'no-cors' });
-    sent.push(mobile);
-    await logMessage({type, mobile, message, mediaUrl, status:'queued'});
-  }
-  return sent;
+  const s = await getSettings();
+  if(!s.apiToken) throw new Error('WhatsBot API Token save केलेला नाही.');
+  const device = s.deviceId ? `&device_id=${encodeURIComponent(s.deviceId)}` : '';
+  const api = type || 'send_sms';
+  const cleanMobiles = mobiles.split(',').map(to91).filter(Boolean).join(',');
+  let url = `https://whatsbot.tech/api/${api}?api_token=${encodeURIComponent(s.apiToken)}&mobile=${encodeURIComponent(cleanMobiles)}${device}`;
+  if(api==='send_sms') url += `&message=${encodeURIComponent(message)}`;
+  if(api==='send_img') url += `&img_url=${encodeURIComponent(mediaUrl)}&img_caption=${encodeURIComponent(message)}`;
+  if(api==='send_doc') url += `&doc_url=${encodeURIComponent(mediaUrl)}`;
+  if(api==='send_video') url += `&video_url=${encodeURIComponent(mediaUrl)}`;
+  const res = await fetch(url, { method:'GET' });
+  const txt = await res.text();
+  await addDoc(collection(db,'whatsapp_logs'),{type:api,mobiles:cleanMobiles,message,mediaUrl,response:txt,createdAt:serverTimestamp()});
+  return txt;
 }
 
-$('loginBtn').onclick = async () => {
-  try { await signInWithEmailAndPassword(auth, $('email').value.trim(), $('password').value); }
-  catch (e) { show('loginMsg', 'Login Error: ' + e.message, true); }
-};
-$('resetBtn').onclick = async () => {
-  try { await sendPasswordResetEmail(auth, $('email').value.trim()); show('loginMsg','Password reset email पाठवला आहे.'); }
-  catch(e){ show('loginMsg','Error: '+e.message,true); }
-};
-$('logoutBtn').onclick = () => signOut(auth);
+$('loginBtn').onclick = async()=>{try{await signInWithEmailAndPassword(auth,val('email'),val('password'));}catch(e){show('loginMsg','Login Error: '+e.message);}};
+$('resetBtn').onclick = async()=>{try{await sendPasswordResetEmail(auth,val('email'));show('loginMsg','Password reset email पाठवला आहे.');}catch(e){show('loginMsg','Error: '+e.message);}};
+$('logoutBtn').onclick = ()=>signOut(auth);
+onAuthStateChanged(auth, async user=>{ $('loginCard').classList.toggle('hidden',!!user); $('appPanel').classList.toggle('hidden',!user); if(user){$('userEmail').textContent=user.email; await loadSettings(); await updateStats(); await loadResources();}});
 
-onAuthStateChanged(auth, (user) => {
-  $('loginCard').classList.toggle('hidden', !!user);
-  $('appPanel').classList.toggle('hidden', !user);
-  if (user) { $('userEmail').textContent = user.email; loadApiSettings(); loadCounts(); }
-});
+async function loadSettings(){ const s=await getSettings(); ['apiToken','deviceId','schoolName','senderMobile'].forEach(id=>{if(s[id]) $(id).value=s[id];}); const c=(await getDoc(doc(db,'settings','contacts'))); if(c.exists()){const d=c.data(); Object.keys(d).forEach(k=>{if($(k)) $(k).value=d[k];});}}
+$('saveApiBtn').onclick=async()=>{await setDoc(doc(db,'settings','whatsbot'),{apiToken:val('apiToken'),deviceId:val('deviceId'),schoolName:val('schoolName'),senderMobile:val('senderMobile'),updatedAt:serverTimestamp()});show('apiMsg','API Settings save झाले.');};
+$('saveContactsBtn').onclick=async()=>{await setDoc(doc(db,'settings','contacts'),{headmasterName:val('headmasterName'),headmasterMobile:val('headmasterMobile'),officer1:val('officer1'),officer2:val('officer2'),officer3:val('officer3'),extraOfficers:val('extraOfficers'),updatedAt:serverTimestamp()});show('contactsMsg','संपर्क save झाले.');};
 
-$('saveApiSettingsBtn').onclick = saveApiSettings;
-$('testApiBtn').onclick = async () => {
-  try{
-    saveApiSettings();
-    await sendWhatsBot('sms', getApi().schoolMobile, `${getApi().schoolName}: WhatsBot API test successful.`);
-    show('apiMsg','Test message WhatsBot queue मध्ये पाठवला.');
-  } catch(e){ show('apiMsg', e.message, true); }
-};
-
-$('addStudentBtn').onclick = async () => {
-  try{
-    const mobile = $('parentMobile').value.trim();
-    const aadhaar = onlyDigits($('studentAadhaar').value);
-    if(!validMobile10(mobile)) return show('studentMsg','मोबाईल नंबर 10 अंकांचा असावा.',true);
-    if(aadhaar && aadhaar.length !== 12) return show('studentMsg','आधार क्रमांक 12 अंकांचा असावा.',true);
-    await addDoc(collection(db,'students'), {
-      name: $('studentName').value.trim(), dob: $('studentDob').value, aadhaar,
-      className: $('studentClass').value.trim(), division: $('studentDivision').value.trim(), rollNo: $('studentRoll').value.trim(),
-      address: $('studentAddress').value.trim(), parentName: $('parentName').value.trim(), parentMobile: mobile,
-      photoUrl: $('studentPhotoUrl').value.trim(), educationInfo: $('studentEducationInfo').value.trim(), createdAt: serverTimestamp()
-    });
-    show('studentMsg','विद्यार्थी डेटा cloud मध्ये save झाला.'); loadCounts();
-  } catch(e){ show('studentMsg','Error: '+e.message,true); }
-};
-$('addTeacherBtn').onclick = async () => {
-  try{
-    const mobile = $('teacherMobile').value.trim();
-    if(!validMobile10(mobile)) return show('teacherMsg','मोबाईल नंबर 10 अंकांचा असावा.',true);
-    await addDoc(collection(db,'teachers'), { name:$('teacherName').value.trim(), subject:$('teacherSubject').value.trim(), mobile, email:$('teacherEmail').value.trim(), createdAt:serverTimestamp() });
-    show('teacherMsg','शिक्षक डेटा cloud मध्ये save झाला.'); loadCounts();
-  } catch(e){ show('teacherMsg','Error: '+e.message,true); }
-};
-$('addOfficerBtn').onclick = async () => {
-  try{
-    await addDoc(collection(db,'officers'), { name:$('officerName').value.trim(), role:$('officerRole').value.trim(), mobile:normalMobile($('officerMobile').value), altMobile:normalMobile($('officerAltMobile').value), email:$('officerEmail').value.trim(), createdAt:serverTimestamp() });
-    show('officerMsg','मुख्याध्यापक / अधिकारी नंबर save झाला.');
-  } catch(e){ show('officerMsg','Error: '+e.message,true); }
-};
-$('addAttendanceBtn').onclick = async () => {
-  try{
-    await addDoc(collection(db,'attendance'), { type:$('attendanceType').value, name:$('personName').value.trim(), className:$('attendanceClass').value.trim(), status:$('status').value, date:$('attendanceDate').value, createdAt:serverTimestamp() });
-    show('attendanceMsg','उपस्थिती cloud मध्ये save झाली.'); loadCounts();
-  } catch(e){ show('attendanceMsg','Error: '+e.message,true); }
-};
-$('sendAttendanceWhatsAppBtn').onclick = async () => {
-  try{
-    const msg = `${getApi().schoolName}\nउपस्थिती नोंद:\nनाव: ${$('personName').value}\nवर्ग/विषय: ${$('attendanceClass').value}\nदिनांक: ${$('attendanceDate').value}\nस्थिती: ${$('status').value}`;
-    await sendWhatsBot('sms', $('defaultSchoolMobile').value || getApi().schoolMobile, msg);
-    show('attendanceMsg','उपस्थिती WhatsApp API द्वारे पाठवली.');
-  } catch(e){ show('attendanceMsg','WhatsApp Error: '+e.message,true); }
-};
-$('addLinkBtn').onclick = async () => {
-  try{
-    await addDoc(collection(db,'syllabus_links'), { title:$('linkTitle').value.trim(), url:$('linkUrl').value.trim(), createdAt:serverTimestamp() });
-    show('linkMsg','अभ्यासक्रम लिंक save झाली.');
-  } catch(e){ show('linkMsg','Error: '+e.message,true); }
-};
-$('sendLinkWhatsAppBtn').onclick = async () => {
-  try{
-    const msg = `${getApi().schoolName}\nअभ्यासक्रम / लिंक:\n${$('linkTitle').value}\n${$('linkUrl').value}`;
-    await sendWhatsBot('sms', getApi().schoolMobile, msg);
-    show('linkMsg','Link WhatsApp API द्वारे पाठवली.');
-  } catch(e){ show('linkMsg','WhatsApp Error: '+e.message,true); }
-};
-$('addEventBtn').onclick = async () => {
-  try{
-    await addDoc(collection(db,'events'), { title:$('eventTitle').value.trim(), date:$('eventDate').value, details:$('eventDetails').value.trim(), createdAt:serverTimestamp() });
-    show('eventMsg','कार्यक्रम / सूचना save झाली.');
-  } catch(e){ show('eventMsg','Error: '+e.message,true); }
-};
-$('sendEventWhatsAppBtn').onclick = async () => {
-  try{
-    const msg = `${getApi().schoolName}\nकार्यक्रम / सूचना\n${$('eventTitle').value}\nदिनांक: ${$('eventDate').value}\n${$('eventDetails').value}`;
-    await sendWhatsBot('sms', getApi().schoolMobile, msg);
-    show('eventMsg','कार्यक्रम सूचना WhatsApp API द्वारे पाठवली.');
-  } catch(e){ show('eventMsg','WhatsApp Error: '+e.message,true); }
-};
-$('sendWaBtn').onclick = async () => {
-  try{
-    await sendWhatsBot($('waType').value, $('waMobile').value, $('waMessage').value, $('waMediaUrl').value);
-    show('waMsg','WhatsBot API request पाठवली.'); loadCounts();
-  } catch(e){ show('waMsg',e.message,true); }
-};
-$('openWaLinkBtn').onclick = () => {
-  const mobile = normalMobile($('waMobile').value.split(',')[0] || '');
-  const text = encodeURIComponent($('waMessage').value || '');
-  if(!mobile) return show('waMsg','Mobile number द्या.',true);
-  window.open(`https://wa.me/${mobile}?text=${text}`,'_blank');
-};
-$('loadReportBtn').onclick = async () => {
-  try{
-    const snap = await getDocs(collection(db,'attendance'));
-    currentRows = [];
-    $('reportBody').innerHTML = '';
-    snap.forEach(doc => {
-      const d = doc.data(); currentRows.push(d);
-      $('reportBody').innerHTML += `<tr><td>${d.date||''}</td><td>${d.type||''}</td><td>${d.name||''}</td><td>${d.className||''}</td><td>${d.status||''}</td></tr>`;
-    });
-  } catch(e){ alert('Report Error: '+e.message); }
-};
-$('exportCsvBtn').onclick = () => {
-  const csv = 'date,type,name,class,status\n' + currentRows.map(r => [r.date,r.type,r.name,r.className,r.status].map(x => `"${String(x||'').replaceAll('"','""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'attendance_report.csv'; a.click();
-};
-async function countCol(name){ try{ const s=await getDocs(collection(db,name)); return s.size; }catch(e){return 0;} }
-async function loadCounts(){
-  $('studentCount').textContent = await countCol('students');
-  $('teacherCount').textContent = await countCol('teachers');
-  $('attendanceCount').textContent = await countCol('attendance');
-  $('messageCount').textContent = await countCol('message_logs');
-}
+$('addStudentBtn').onclick=async()=>{try{const m1=to91(val('parentMobile1')); if(!validMobile(m1)) return show('studentMsg','पालक मोबाईल 10 अंकांचा असावा.'); const aad=val('aadhar'); if(aad && !/^\d{12}$/.test(aad)) return show('studentMsg','आधार क्रमांक 12 अंकांचा असावा.'); await addDoc(collection(db,'students'),{name:val('studentName'),className:val('studentClass'),division:val('studentDiv'),rollNo:val('studentRoll'),dob:val('studentDob'),aadhar:aad,photoUrl:val('studentPhoto'),fatherName:val('fatherName'),motherName:val('motherName'),parentMobile1:m1,parentMobile2:to91(val('parentMobile2')),parentMobile3:to91(val('parentMobile3')),address:val('address'),createdAt:serverTimestamp()});show('studentMsg','विद्यार्थी डेटा cloud मध्ये save झाला.'); updateStats();}catch(e){show('studentMsg','Error: '+e.message);}};
+$('addTeacherBtn').onclick=async()=>{try{await addDoc(collection(db,'teachers'),{name:val('teacherName'),subject:val('teacherSubject'),mobile:to91(val('teacherMobile')),createdAt:serverTimestamp()});show('teacherMsg','शिक्षक डेटा cloud मध्ये save झाला.'); updateStats();}catch(e){show('teacherMsg','Error: '+e.message);}};
+$('addAttendanceBtn').onclick=async()=>{try{const data={type:val('attendanceType'),name:val('personName'),className:val('attendanceClass'),status:val('status'),date:val('attendanceDate'),reason:val('attendanceReason'),parentMobile:to91(val('attendanceParentMobile')),createdAt:serverTimestamp()}; await addDoc(collection(db,'attendance'),data); show('attendanceMsg','उपस्थिती cloud मध्ये save झाली.'); if($('notifyParent').checked && data.parentMobile){ const msg=`${val('schoolName')||'शाळा'} सूचना: ${data.name} यांची ${data.date} रोजी स्थिती: ${data.status}. कारण: ${data.reason||'-'}`; await sendWhatsBot('send_sms',data.parentMobile,msg); show('attendanceMsg','उपस्थिती save झाली व पालकांना WhatsApp सूचना पाठवली.'); } updateStats();}catch(e){show('attendanceMsg','Error: '+e.message);}};
+$('saveNoticeBtn').onclick=async()=>{try{await addDoc(collection(db,'notices'),{category:val('noticeCategory'),title:val('noticeTitle'),message:val('noticeMessage'),mobiles:val('noticeMobiles'),mediaUrl:val('noticeMedia'),createdAt:serverTimestamp()});show('noticeMsg','सूचना save झाली.'); updateStats();}catch(e){show('noticeMsg','Error: '+e.message);}};
+$('sendNoticeBtn').onclick=async()=>{try{let type='send_sms'; if(val('noticeMedia')){ const u=val('noticeMedia').toLowerCase(); type=u.endsWith('.mp4')?'send_video':(u.endsWith('.pdf')||u.endsWith('.doc')||u.endsWith('.docx'))?'send_doc':'send_img'; } const msg=`${val('noticeCategory')} - ${val('noticeTitle')}\n${val('noticeMessage')}`; const res=await sendWhatsBot(type,val('noticeMobiles'),msg,val('noticeMedia')); show('noticeMsg','WhatsApp API Response: '+res);}catch(e){show('noticeMsg','Error: '+e.message);}};
+$('sendWaBtn').onclick=async()=>{try{ const res=await sendWhatsBot(val('waType'),val('waMobile'),val('waMessage'),val('mediaUrl')); show('waMsg','WhatsApp API Response: '+res); }catch(e){show('waMsg','Error: '+e.message);} };
+$('openWaLink').onclick=(ev)=>{ const m=to91(val('waMobile').split(',')[0]); $('openWaLink').href=`https://wa.me/${m}?text=${encodeURIComponent(val('waMessage'))}`; };
+$('addResourceBtn').onclick=async()=>{try{await addDoc(collection(db,'resources'),{className:val('resourceClass'),subject:val('resourceSubject'),title:val('resourceTitle'),url:val('resourceUrl'),createdAt:serverTimestamp()});show('resourceMsg','Link save झाली.');loadResources();}catch(e){show('resourceMsg','Error: '+e.message);}};
+async function loadResources(){try{const snap=await getDocs(collection(db,'resources')); $('resourceList').innerHTML=''; snap.forEach(d=>{const r=d.data(); $('resourceList').innerHTML+=`<div class="item"><b>${r.className} - ${r.subject}</b><br>${r.title}<br><a target="_blank" href="${r.url}">${r.url}</a></div>`;});}catch(e){}}
+$('loadReportBtn').onclick=async()=>{try{const q=query(collection(db,'attendance'),orderBy('createdAt','desc'),limit(100)); const snap=await getDocs(q); currentRows=[]; $('reportBody').innerHTML=''; snap.forEach(doc=>{const d=doc.data(); currentRows.push(d); $('reportBody').innerHTML += `<tr><td>${d.date||''}</td><td>${d.type||''}</td><td>${d.name||''}</td><td>${d.className||''}</td><td>${d.status||''}</td><td>${d.reason||''}</td></tr>`;});}catch(e){alert('Report Error: '+e.message);}};
+$('exportCsvBtn').onclick=()=>{const csv='date,type,name,class,status,reason\n'+currentRows.map(r=>[r.date,r.type,r.name,r.className,r.status,r.reason].map(x=>`"${x||''}"`).join(',')).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='attendance_report.csv'; a.click();};
+async function updateStats(){try{const cols=['students','teachers','attendance','notices']; for(const c of cols){const snap=await getDocs(collection(db,c)); const id=c==='students'?'studentCount':c==='teachers'?'teacherCount':c==='attendance'?'attendanceCount':'noticeCount'; $(id).textContent=snap.size;}}catch(e){}}
