@@ -1,9 +1,9 @@
-// Firebase Console मधून मिळालेला config येथे paste करा.
 export const firebaseConfig = {
-  apiKey: "PASTE_API_KEY_HERE",
-  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
-  projectId: "PASTE_PROJECT_ID",
-  storageBucket: "PASTE_PROJECT_ID.appspot.com",
-  messagingSenderId: "PASTE_SENDER_ID",
-  appId: "PASTE_APP_ID"
+  apiKey: "Firebase मधील exact apiKey",
+  authDomain: "school-managment-8c102.firebaseapp.com",
+  projectId: "school-managment-8c102",
+  storageBucket: "school-managment-8c102.firebasestorage.app",
+  messagingSenderId: "288441699527",
+  appId: "Firebase मधील exact appId",
+  measurementId: "Firebase मधील exact measurementId"
 };
