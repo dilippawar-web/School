@@ -1,11 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp, getDocs, query, limit, where } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
 let currentRows=[], cameraStream=null;
-const SCHOOL="स्व. गुरुबक्षसिंग साबरवाल माध्यमिक व उच्च माध्यमिक विद्यालय, नायगाव (भिकापूर)";
+const SCHOOL="स्व. गुरबक्षसिंग साबरवाल माध्यमिक व उच्च माध्यमिक विद्यालय, नायगाव (भिकापूर)";
 const $=id=>document.getElementById(id), val=id=>($(id)?.value||"").trim(), show=(id,m)=>{const e=$(id);if(e)e.textContent=m};
 const today=()=>new Date().toISOString().slice(0,10);
 window.addEventListener("load",()=>["attDate","hwDate","holidayDate","eduDate","sportsDate","examDate","teacherAttDate"].forEach(id=>{if($(id)&&!$(id).value)$(id).value=today()}));
@@ -35,7 +35,9 @@ $("loginBtn").onclick=async()=>{try{await signInWithEmailAndPassword(auth,val("e
 $("resetBtn").onclick=async()=>{try{await sendPasswordResetEmail(auth,val("email"));show("loginMsg","Password reset email पाठवला आहे.")}catch(e){show("loginMsg","Error: "+e.message)}};
 $("logoutBtn").onclick=()=>signOut(auth);
 onAuthStateChanged(auth,u=>{$("loginCard").classList.toggle("hidden",!!u);$("appPanel").classList.toggle("hidden",!u);if(u){$("userEmail").textContent=u.email;loadSettings();}});
-document.querySelectorAll(".menu").forEach(b=>b.onclick=()=>{document.querySelectorAll(".menu").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));b.classList.add("active");$(b.dataset.page).classList.add("active");});
+document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));b.classList.add("active");$(b.dataset.page).classList.add("active");});
+
+$("createUserBtn").onclick=async()=>{try{await createUserWithEmailAndPassword(auth,val("newUserEmail"),val("newUserPassword")); await saveDoc("users",{email:val("newUserEmail")}); show("createUserMsg","User ID तयार झाला. Email: "+val("newUserEmail"));}catch(e){show("createUserMsg","Error: "+e.message)}};
 
 $("startCamera").onclick=async()=>{try{cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false});$("cameraPreview").srcObject=cameraStream}catch(e){show("studentMsg","Camera Error: "+e.message)}};
 $("capturePhoto").onclick=()=>{const v=$("cameraPreview"),c=$("photoCanvas");c.width=v.videoWidth||640;c.height=v.videoHeight||480;c.getContext("2d").drawImage(v,0,0,c.width,c.height);const d=c.toDataURL("image/jpeg",.7);$("photoPreview").src=d;$("studentPhotoUrl").value=d;show("studentMsg","फोटो capture झाला.")};
