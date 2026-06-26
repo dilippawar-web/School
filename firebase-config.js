@@ -1,5 +1,5 @@
 export const firebaseConfig = {
-  apiKey: "तुमचा Firebase apiKey",
+  apiKey: "AIzaSyCvqqngwvG9wDWEnSYB6xjTS3VPukU5ipw",
   authDomain: "school-managment-8c102.firebaseapp.com",
   projectId: "school-managment-8c102",
   storageBucket: "school-managment-8c102.firebasestorage.app",
