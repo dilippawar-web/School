@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>School ERP V5.5</title>
+  <title>School ERP V5.6 Official</title>
   <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
-<header class="top-strip">
-  <span>ADMISSIONS / SCHOOL ERP • Academic Year 2026 - 2027</span>
+<header class="notice-bar">
+  <span>शैक्षणिक वर्ष 2026 - 2027</span>
   <span>Attendance • Homework • Notice • WhatsBot API</span>
 </header>
 
@@ -18,20 +18,20 @@
     <div class="school-title">
       <h1>स्व. गुरबक्षसिंग साबरवाल माध्यमिक व उच्च माध्यमिक विद्यालय</h1>
       <h2>नायगाव (भिकापूर)</h2>
-      <p>इयत्ता 8वी / 9वी / 10वी — गणित • उपस्थिती • गृहपाठ • सूचना</p>
+      <p>विद्यार्थी उपस्थिती, गृहपाठ, सूचना व पालक संपर्क व्यवस्थापन</p>
     </div>
   </div>
 </header>
 
-<nav class="main-nav" id="mainNav">
-  <button class="nav-btn active" data-page="dashboard">Home</button>
+<nav class="main-nav">
+  <button class="nav-btn active" data-page="dashboard">मुख्यपृष्ठ</button>
   <button class="nav-btn" data-page="students">विद्यार्थी</button>
   <button class="nav-btn" data-page="attendance">उपस्थिती</button>
   <button class="nav-btn" data-page="homework">गृहपाठ</button>
   <button class="nav-btn" data-page="notice">सूचना</button>
-  <button class="nav-btn" data-page="templates">Templates</button>
-  <button class="nav-btn" data-page="study">पुस्तके</button>
-  <button class="nav-btn" data-page="excel">CSV</button>
+  <button class="nav-btn" data-page="templates">Official Templates</button>
+  <button class="nav-btn" data-page="study">पुस्तके/लिंक</button>
+  <button class="nav-btn" data-page="excel">CSV Upload</button>
   <button class="nav-btn" data-page="users">User ID</button>
   <button class="nav-btn" data-page="settings">Settings</button>
   <button class="nav-btn" data-page="reports">Reports</button>
@@ -44,7 +44,6 @@
   <input id="password" type="password" placeholder="Password"/>
   <button id="loginBtn">Login</button>
   <button id="resetBtn" class="btn-gray">Password Reset</button>
-  <p class="hint">Default user तयार करण्यासाठी Firebase Authentication मध्ये Add user करा किंवा User ID tab मधून नवीन user create करा.</p>
   <p id="loginMsg" class="msg"></p>
 </section>
 
@@ -57,13 +56,13 @@
   <section id="dashboard" class="page active">
     <div class="hero-card">
       <h2>School ERP Dashboard</h2>
-      <p>विद्यार्थी माहिती, उपस्थिती, गृहपाठ, सूचना व WhatsApp/SMS संदेश व्यवस्थापनासाठी एकाच ठिकाणी सुविधा.</p>
+      <p>या प्रणालीद्वारे विद्यार्थी माहिती, उपस्थिती, गृहपाठ, सूचना, परीक्षा व पालक संपर्क एकाच ठिकाणी व्यवस्थित करता येईल.</p>
     </div>
     <div class="stats">
-      <div class="stat"><b>8वी</b><span>Class Module</span></div>
-      <div class="stat"><b>9वी</b><span>Class Module</span></div>
-      <div class="stat"><b>10वी</b><span>Class Module</span></div>
-      <div class="stat"><b>Auto Message</b><span>P/A बदलल्यावर</span></div>
+      <div class="stat"><b>8वी</b><span>Attendance / Homework</span></div>
+      <div class="stat"><b>9वी</b><span>Attendance / Homework</span></div>
+      <div class="stat"><b>10वी</b><span>Attendance / Homework</span></div>
+      <div class="stat"><b>WhatsBot</b><span>Auto Message Ready</span></div>
     </div>
   </section>
 
@@ -130,7 +129,7 @@
 
   <section id="homework" class="page">
     <div class="card">
-      <h2>आज वर्गात काय शिकवले व गृहपाठ</h2>
+      <h2>वर्गात शिकवले / गृहपाठ</h2>
       <div class="grid">
         <select id="hwClass"><option>8वी</option><option selected>9वी</option><option>10वी</option></select>
         <input id="hwDate" type="date"/>
@@ -140,9 +139,9 @@
         <input id="homeworkMobile" placeholder="पालक/Group मोबाईल 91 सहित"/>
       </div>
       <label>आज वर्गात शिकवलेले</label>
-      <textarea id="classworkDone" placeholder="उदा. रेषीय समीकरणे — उदाहरणे 1 ते 5 सोडवली"></textarea>
+      <textarea id="classworkDone" placeholder="आज शिकवलेला भाग"></textarea>
       <label>दिलेला गृहपाठ</label>
-      <textarea id="homeworkGiven" placeholder="उदा. सरावसंच 1.1 प्रश्न 1 ते 5 सोडवून आणावेत"></textarea>
+      <textarea id="homeworkGiven" placeholder="दिलेला गृहपाठ"></textarea>
       <button id="previewHomework">Message Preview</button>
       <button id="saveHomework">Save</button>
       <button id="sendHomeworkWhatsApp" class="btn-gray">WhatsApp पाठवा</button>
@@ -162,9 +161,20 @@
 
   <section id="templates" class="page">
     <div class="card">
-      <h2>तयार Templates</h2>
+      <h2>Official Message Templates</h2>
       <div class="grid short">
-        <select id="templateType"><option value="present">विद्यार्थी उपस्थित</option><option value="absent">विद्यार्थी अनुपस्थित</option><option value="halfday">हाफ डे</option><option value="homework">गृहपाठ</option><option value="holiday">सुट्टी</option><option value="exam">परीक्षा</option><option value="sports">क्रीडा</option><option value="edu">शैक्षणिक कार्यक्रम</option></select>
+        <select id="templateType">
+          <option value="present">विद्यार्थी उपस्थित</option>
+          <option value="absent">विद्यार्थी अनुपस्थित</option>
+          <option value="halfday">हाफ डे / रजा</option>
+          <option value="homework">गृहपाठ</option>
+          <option value="holiday">सुट्टी सूचना</option>
+          <option value="exam">परीक्षा सूचना</option>
+          <option value="sports">क्रीडा कार्यक्रम</option>
+          <option value="edu">शैक्षणिक कार्यक्रम</option>
+          <option value="fee">फी सूचना</option>
+          <option value="ptm">पालक सभा</option>
+        </select>
         <input id="tplStudent" placeholder="विद्यार्थी नाव"/>
         <select id="tplClass"><option>8वी</option><option>9वी</option><option>10वी</option></select>
         <input id="tplTeacher" placeholder="वर्ग शिक्षक / विशेष शिक्षक"/>
@@ -186,14 +196,12 @@
   <section id="users" class="page">
     <div class="card">
       <h2>User ID / Password Create</h2>
-      <p class="hint">नवीन User ID तयार करण्यासाठी Firebase Authentication मध्ये user तयार होईल.</p>
       <div class="grid short">
         <input id="newUserEmail" type="email" placeholder="नवीन User Email"/>
         <input id="newUserPassword" type="password" placeholder="Password — कमीतकमी 6 अक्षरे"/>
       </div>
       <button id="createUserBtn">Create User ID</button>
       <p id="createUserMsg" class="msg"></p>
-      <p class="hint">मुख्य admin साठी Firebase Console → Authentication → Add user हा पर्यायही वापरू शकता.</p>
     </div>
   </section>
 
